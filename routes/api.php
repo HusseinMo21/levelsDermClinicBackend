@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\AppointmentController;
 use App\Http\Controllers\Api\ServiceController;
 use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\DashboardController;
+use App\Http\Controllers\Api\DoctorController;
 use App\Http\Controllers\Api\AuthController;
 
 /*
@@ -27,19 +28,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/auth/logout', [AuthController::class, 'logout']);
         Route::get('/auth/me', [AuthController::class, 'me']);
 
-        // Dashboard routes for all screens
-        Route::get('/dashboard/stats', [DashboardController::class, 'getStats']);
-        Route::get('/dashboard/recent-appointments', [DashboardController::class, 'getRecentAppointments']);
-        Route::get('/dashboard/today-appointments', [DashboardController::class, 'getTodayAppointments']);
-        Route::get('/dashboard/kpis', [DashboardController::class, 'getKPIs']);
-
-    // Patient Management API (العملاء)
+    // Patient Management API (العملاء) - Available to all authenticated users
     Route::apiResource('patients', PatientController::class);
     Route::get('/patients/search/{term}', [PatientController::class, 'search']);
-
-    // Clients API (العملاء) - Dashboard Interface
-    Route::get('/clients', [PatientController::class, 'clients']);
-    Route::get('/clients/{id}/details', [PatientController::class, 'clientDetails']);
 
     // Appointment Management API (المواعيد)
     Route::apiResource('appointments', AppointmentController::class);
@@ -51,6 +42,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('services', ServiceController::class);
     Route::get('/services/by-category/{category}', [ServiceController::class, 'getByCategory']);
 
+
     // Payment Management API (المدفوعات)
     Route::apiResource('payments', PaymentController::class);
     Route::get('/payments/by-patient/{patient_id}', [PaymentController::class, 'getByPatient']);
@@ -59,7 +51,23 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Role-specific endpoints
     Route::middleware('role:admin')->group(function () {
+        // Dashboard routes - Admin only
+        Route::get('/dashboard/stats', [DashboardController::class, 'getStats']);
+        Route::get('/dashboard/recent-appointments', [DashboardController::class, 'getRecentAppointments']);
+        Route::get('/dashboard/today-appointments', [DashboardController::class, 'getTodayAppointments']);
+        Route::get('/dashboard/kpis', [DashboardController::class, 'getKPIs']);
         Route::get('/admin/all-stats', [DashboardController::class, 'getAllStats']);
+        
+        // Clients API - Admin only (Dashboard Interface)
+        Route::get('/clients', [PatientController::class, 'clients']);
+        Route::get('/clients/{id}/details', [PatientController::class, 'clientDetails']);
+        
+        // Doctor Management API - Admin only
+        Route::get('/doctors/specializations', [DoctorController::class, 'getSpecializations']);
+        Route::get('/doctors/search/{term}', [DoctorController::class, 'search']);
+        Route::get('/doctors/by-specialization/{specialization}', [DoctorController::class, 'getBySpecialization']);
+        Route::get('/doctors/{id}/info', [DoctorController::class, 'getDoctorInfo']);
+        Route::apiResource('doctors', DoctorController::class);
     });
 
     Route::middleware('role:receptionist')->group(function () {

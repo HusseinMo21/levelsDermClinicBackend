@@ -19,6 +19,9 @@ class Doctor extends Model
         'qualifications',
         'experience_years',
         'consultation_fee',
+        'monthly_salary',
+        'detection_value',
+        'doctor_percentage',
         'bio',
         'profile_image',
         'working_hours',
@@ -31,6 +34,9 @@ class Doctor extends Model
         'working_hours' => 'array',
         'available_days' => 'array',
         'consultation_fee' => 'decimal:2',
+        'monthly_salary' => 'decimal:2',
+        'detection_value' => 'decimal:2',
+        'doctor_percentage' => 'decimal:2',
     ];
 
     // Relationships

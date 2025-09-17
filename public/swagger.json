@@ -1001,6 +1001,395 @@
           }
         }
       }
+    },
+    "/doctors": {
+      "get": {
+        "tags": ["Doctors"],
+        "summary": "Get list of doctors",
+        "description": "Retrieve a paginated list of doctors with search and filter capabilities",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "description": "Search term for doctor name or specialization",
+            "required": false,
+            "schema": {"type": "string"}
+          },
+          {
+            "name": "specialization",
+            "in": "query",
+            "description": "Filter by doctor specialization",
+            "required": false,
+            "schema": {"type": "string"}
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Filter by doctor status",
+            "required": false,
+            "schema": {"type": "string", "enum": ["active", "inactive", "suspended"]}
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number for pagination",
+            "required": false,
+            "schema": {"type": "integer", "default": 1}
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "description": "Number of items per page",
+            "required": false,
+            "schema": {"type": "integer", "default": 12}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {"type": "boolean", "example": true},
+                    "message": {"type": "string", "example": "تم جلب قائمة الأطباء بنجاح"},
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {"type": "integer", "example": 1},
+                          "doctor_name": {"type": "string", "example": "د/ محمد عبدالله أحمد"},
+                          "specialization": {"type": "string", "example": "دكتور جلدية"},
+                          "today_appointments": {"type": "integer", "example": 15},
+                          "status": {"type": "string", "example": "نشط"},
+                          "consultation_fee": {"type": "number", "example": 200.00},
+                          "experience_years": {"type": "integer", "example": 5},
+                          "license_number": {"type": "string", "example": "DOC123456"}
+                        }
+                      }
+                    },
+                    "pagination": {"type": "object"}
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Doctors"],
+        "summary": "Create a new doctor",
+        "description": "Create a new doctor with all required information including basic info, role, permissions, financial info, working days, and credentials",
+        "security": [{"bearerAuth": []}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["first_name","second_name","third_name","fourth_name","phone","national_id","email","address","role","permissions","monthly_salary","detection_value","doctor_percentage","working_days","username","password","password_confirmation","license_number","specialization","consultation_fee"],
+                "properties": {
+                  "first_name": {"type": "string", "example": "محمد"},
+                  "second_name": {"type": "string", "example": "عبدالله"},
+                  "third_name": {"type": "string", "example": "أحمد"},
+                  "fourth_name": {"type": "string", "example": "السعدي"},
+                  "phone": {"type": "string", "example": "0501234567"},
+                  "national_id": {"type": "string", "example": "1234567890"},
+                  "email": {"type": "string", "example": "doctor@example.com"},
+                  "address": {"type": "string", "example": "الرياض، حي النرجس"},
+                  "role": {"type": "string", "example": "doctor"},
+                  "permissions": {
+                    "type": "array",
+                    "items": {"type": "string", "enum": ["see_patients","add_appointment","remove_appointment","add_registration","see_patient_reports"]}
+                  },
+                  "monthly_salary": {"type": "number", "example": 15000},
+                  "detection_value": {"type": "number", "example": 200},
+                  "doctor_percentage": {"type": "number", "example": 30},
+                  "working_days": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "day": {"type": "string", "example": "saturday"},
+                        "from_time": {"type": "string", "example": "09:00"},
+                        "to_time": {"type": "string", "example": "17:00"},
+                        "is_working": {"type": "boolean", "example": true}
+                      }
+                    }
+                  },
+                  "username": {"type": "string", "example": "doctor123"},
+                  "password": {"type": "string", "example": "password123"},
+                  "password_confirmation": {"type": "string", "example": "password123"},
+                  "license_number": {"type": "string", "example": "DOC123456"},
+                  "specialization": {"type": "string", "example": "جلدية وتجميل"},
+                  "consultation_fee": {"type": "number", "example": 300}
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Doctor created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {"type": "boolean", "example": true},
+                    "message": {"type": "string", "example": "تم إنشاء الطبيب بنجاح"},
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {"type": "integer", "example": 1},
+                        "doctor_name": {"type": "string", "example": "د/ محمد عبدالله أحمد السعدي"},
+                        "specialization": {"type": "string", "example": "جلدية وتجميل"},
+                        "license_number": {"type": "string", "example": "DOC123456"},
+                        "email": {"type": "string", "example": "doctor@example.com"},
+                        "phone": {"type": "string", "example": "0501234567"},
+                        "national_id": {"type": "string", "example": "1234567890"},
+                        "username": {"type": "string", "example": "doctor123"},
+                        "working_days": {"type": "array", "items": {"type": "string"}},
+                        "working_hours": {"type": "object"},
+                        "monthly_salary": {"type": "number", "example": 15000},
+                        "detection_value": {"type": "number", "example": 200},
+                        "doctor_percentage": {"type": "number", "example": 30},
+                        "permissions": {"type": "array", "items": {"type": "string"}}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {"type": "boolean", "example": false},
+                    "message": {"type": "string", "example": "بيانات غير صحيحة"},
+                    "errors": {"type": "object"}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/doctors/{id}": {
+      "get": {
+        "tags": ["Doctors"],
+        "summary": "Get doctor details",
+        "description": "Get detailed information about a specific doctor",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Doctor ID",
+            "required": true,
+            "schema": {"type": "integer", "example": 1}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {"type": "boolean", "example": true},
+                    "message": {"type": "string", "example": "تم جلب تفاصيل الطبيب بنجاح"},
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {"type": "integer", "example": 1},
+                        "doctor_name": {"type": "string", "example": "د/ محمد عبدالله أحمد"},
+                        "specialization": {"type": "string", "example": "دكتور جلدية"},
+                        "license_number": {"type": "string", "example": "DOC123456"},
+                        "qualifications": {"type": "string", "example": "دكتوراه في الأمراض الجلدية"},
+                        "experience_years": {"type": "integer", "example": 5},
+                        "consultation_fee": {"type": "number", "example": 200.00},
+                        "bio": {"type": "string", "example": "طبيب متخصص في الأمراض الجلدية"},
+                        "status": {"type": "string", "example": "نشط"},
+                        "working_hours": {"type": "object"},
+                        "available_days": {"type": "array"},
+                        "today_appointments": {"type": "integer", "example": 15},
+                        "total_appointments": {"type": "integer", "example": 150},
+                        "notes": {"type": "string", "example": "ملاحظات إضافية"}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/doctors/search/{term}": {
+      "get": {
+        "tags": ["Doctors"],
+        "summary": "Search doctors",
+        "description": "Search doctors by name, specialization, or license number",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {
+            "name": "term",
+            "in": "path",
+            "description": "Search term",
+            "required": true,
+            "schema": {"type": "string", "example": "جلدية"}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/doctors/by-specialization/{specialization}": {
+      "get": {
+        "tags": ["Doctors"],
+        "summary": "Get doctors by specialization",
+        "description": "Get all doctors with a specific specialization",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {
+            "name": "specialization",
+            "in": "path",
+            "description": "Doctor specialization",
+            "required": true,
+            "schema": {"type": "string", "example": "جلدية"}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/doctors/specializations": {
+      "get": {
+        "tags": ["Doctors"],
+        "summary": "Get all specializations",
+        "description": "Get list of all available doctor specializations",
+        "security": [{"bearerAuth": []}],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {"type": "boolean", "example": true},
+                    "message": {"type": "string", "example": "تم جلب التخصصات بنجاح"},
+                    "data": {
+                      "type": "array",
+                      "items": {"type": "string", "example": "جلدية"}
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/doctors/{id}/info": {
+      "get": {
+        "tags": ["Doctors"],
+        "summary": "Get doctor comprehensive info",
+        "description": "Get comprehensive doctor information including statistics, reservations, and tools used",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Doctor ID",
+            "required": true,
+            "schema": {"type": "integer", "example": 1}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {"type": "boolean", "example": true},
+                    "message": {"type": "string", "example": "تم جلب معلومات الطبيب بنجاح"},
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "doctor_info": {
+                          "type": "object",
+                          "properties": {
+                            "id": {"type": "integer", "example": 1},
+                            "doctor_name": {"type": "string", "example": "د/ محمد عبدالله أحمد"},
+                            "specialization": {"type": "string", "example": "دكتور جلدية"},
+                            "license_number": {"type": "string", "example": "DOC123456"},
+                            "consultation_fee": {"type": "number", "example": 200.00}
+                          }
+                        },
+                        "reservation_statistics": {
+                          "type": "object",
+                          "properties": {
+                            "total_today": {"type": "integer", "example": 15},
+                            "reservations_done": {"type": "integer", "example": 8},
+                            "pending_reservations": {"type": "integer", "example": 4},
+                            "reservations_left": {"type": "integer", "example": 3}
+                          }
+                        },
+                        "reservations_table": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {"type": "integer", "example": 1},
+                              "patient_name": {"type": "string", "example": "أحمد محمد"},
+                              "time": {"type": "string", "example": "10:00"},
+                              "service_name": {"type": "string", "example": "استشارة جلدية"},
+                              "condition": {"type": "string", "example": "تم التنفيذ"},
+                              "notes": {"type": "string", "example": "ملاحظات إضافية"}
+                            }
+                          }
+                        },
+                        "tools_table": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {"type": "integer", "example": 1},
+                              "tool_name": {"type": "string", "example": "مشرط جراحي"},
+                              "quantity": {"type": "integer", "example": 2},
+                              "date": {"type": "string", "example": "2025-09-17"},
+                              "notes": {"type": "string", "example": "لعملية تجميلية"}
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   }
 }
