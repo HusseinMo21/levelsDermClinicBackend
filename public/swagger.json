@@ -1,0 +1,1006 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Levels Derm Clinic API",
+    "version": "1.0.0",
+    "description": "API for cosmetic clinic management system with Arabic support"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8000/api",
+      "description": "Local development server"
+    }
+  ],
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "Patient": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "patient_id": {
+            "type": "string",
+            "example": "PAT000001"
+          },
+          "national_id": {
+            "type": "string",
+            "example": "1234567890"
+          },
+          "first_name": {
+            "type": "string",
+            "example": "أحمد"
+          },
+          "last_name": {
+            "type": "string",
+            "example": "محمد علي"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "ahmed@example.com"
+          },
+          "phone": {
+            "type": "string",
+            "example": "0501234567"
+          },
+          "date_of_birth": {
+            "type": "string",
+            "format": "date",
+            "example": "1990-01-01"
+          },
+          "gender": {
+            "type": "string",
+            "enum": ["male", "female"],
+            "example": "male"
+          },
+          "address": {
+            "type": "string",
+            "example": "الرياض، حي النرجس"
+          },
+          "city": {
+            "type": "string",
+            "example": "الرياض"
+          },
+          "state": {
+            "type": "string",
+            "example": "منطقة الرياض"
+          },
+          "country": {
+            "type": "string",
+            "example": "السعودية"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["active", "inactive", "suspended"],
+            "example": "active"
+          },
+          "visit_count": {
+            "type": "integer",
+            "example": 5
+          }
+        }
+      },
+      "SuccessResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "تم تنفيذ العملية بنجاح"
+          },
+          "data": {
+            "type": "object"
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/auth/login": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "User login",
+        "description": "Authenticate user and return access token",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["email", "password"],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "example": "admin@levelsderm.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "password123"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "تم تسجيل الدخول بنجاح"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "user": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "integer",
+                              "example": 1
+                            },
+                            "name": {
+                              "type": "string",
+                              "example": "أحمد صالح - مدير النظام"
+                            },
+                            "email": {
+                              "type": "string",
+                              "example": "admin@levelsderm.com"
+                            },
+                            "roles": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              },
+                              "example": ["admin"]
+                            },
+                            "is_active": {
+                              "type": "boolean",
+                              "example": true
+                            }
+                          }
+                        },
+                        "token": {
+                          "type": "string",
+                          "example": "1|abc123..."
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/me": {
+      "get": {
+        "tags": ["Authentication"],
+        "summary": "Get current user",
+        "description": "Get information about the currently authenticated user",
+        "security": [{"bearerAuth": []}],
+        "responses": {
+          "200": {
+            "description": "User information retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "تم جلب بيانات المستخدم بنجاح"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "example": 1
+                        },
+                        "name": {
+                          "type": "string",
+                          "example": "أحمد صالح - مدير النظام"
+                        },
+                        "email": {
+                          "type": "string",
+                          "example": "admin@levelsderm.com"
+                        },
+                        "roles": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "example": ["admin"]
+                        },
+                        "permissions": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "is_active": {
+                          "type": "boolean",
+                          "example": true
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "User logout",
+        "description": "Logout the current user and revoke token",
+        "security": [{"bearerAuth": []}],
+        "responses": {
+          "200": {
+            "description": "Logout successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "تم تسجيل الخروج بنجاح"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/dashboard/kpis": {
+      "get": {
+        "tags": ["Dashboard"],
+        "summary": "Get dashboard KPIs",
+        "description": "Get key performance indicators for the dashboard",
+        "security": [{"bearerAuth": []}],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "تم جلب مؤشرات الأداء بنجاح"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "total_patients": {
+                          "type": "integer",
+                          "example": 145
+                        },
+                        "total_doctors": {
+                          "type": "integer",
+                          "example": 19
+                        },
+                        "today_appointments": {
+                          "type": "integer",
+                          "example": 17
+                        },
+                        "today_payments": {
+                          "type": "number",
+                          "format": "float",
+                          "example": 3750.00
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/dashboard/recent-appointments": {
+      "get": {
+        "tags": ["Dashboard"],
+        "summary": "Get recent appointments",
+        "description": "Get list of recent appointments for the dashboard",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Number of appointments to retrieve",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "تم جلب المواعيد الأخيرة بنجاح"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "example": 1
+                          },
+                          "patient_name": {
+                            "type": "string",
+                            "example": "نور أحمد محمد"
+                          },
+                          "doctor_name": {
+                            "type": "string",
+                            "example": "د. سارة أحمد"
+                          },
+                          "appointment_date": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2025-09-17"
+                          },
+                          "appointment_time": {
+                            "type": "string",
+                            "example": "12:00"
+                          },
+                          "status": {
+                            "type": "string",
+                            "example": "تم التنفيذ"
+                          },
+                          "payment_method": {
+                            "type": "string",
+                            "example": "نقدي"
+                          },
+                          "total_amount": {
+                            "type": "number",
+                            "format": "float",
+                            "example": 500.00
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/dashboard/today-appointments": {
+      "get": {
+        "tags": ["Dashboard"],
+        "summary": "Get today's appointments",
+        "description": "Get list of today's appointments with patient, doctor, time, status, and payment method",
+        "security": [{"bearerAuth": []}],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "تم جلب مواعيد اليوم بنجاح"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "example": 1
+                          },
+                          "patient_name": {
+                            "type": "string",
+                            "example": "نور أحمد"
+                          },
+                          "doctor_name": {
+                            "type": "string",
+                            "example": "د. محمد حسن"
+                          },
+                          "appointment_time": {
+                            "type": "string",
+                            "example": "12:00"
+                          },
+                          "status": {
+                            "type": "string",
+                            "example": "تم التنفيذ"
+                          },
+                          "payment_method": {
+                            "type": "string",
+                            "example": "نقدي"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/appointments": {
+      "get": {
+        "tags": ["Appointments"],
+        "summary": "Get all appointments",
+        "description": "Get list of all appointments with operation number, patient name, service name, price, payment method, date, and notes",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number for pagination",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 1
+            }
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "description": "Number of items per page",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 15
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Filter by appointment status",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["scheduled", "confirmed", "in_progress", "completed", "cancelled", "no_show"]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "تم جلب المواعيد بنجاح"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "example": 1
+                          },
+                          "operation_number": {
+                            "type": "string",
+                            "example": "OPR000001"
+                          },
+                          "patient_name": {
+                            "type": "string",
+                            "example": "نور أحمد محمد"
+                          },
+                          "service_name": {
+                            "type": "string",
+                            "example": "استشارة جلدية"
+                          },
+                          "price": {
+                            "type": "number",
+                            "format": "float",
+                            "example": 200.00
+                          },
+                          "payment_method": {
+                            "type": "string",
+                            "example": "نقدي"
+                          },
+                          "date": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2025-09-17"
+                          },
+                          "time": {
+                            "type": "string",
+                            "example": "12:00"
+                          },
+                          "notes": {
+                            "type": "string",
+                            "example": "ملاحظات إضافية"
+                          },
+                          "status": {
+                            "type": "string",
+                            "example": "تم التنفيذ"
+                          }
+                        }
+                      }
+                    },
+                    "pagination": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/appointments/{id}": {
+      "get": {
+        "tags": ["Appointments"],
+        "summary": "Get appointment details",
+        "description": "Get detailed information about a specific appointment including patient name, phone, doctor specialization, payment processed by, etc.",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Appointment ID",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "تم جلب تفاصيل الموعد بنجاح"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "example": 1
+                        },
+                        "operation_number": {
+                          "type": "string",
+                          "example": "OPR000001"
+                        },
+                        "patient_name": {
+                          "type": "string",
+                          "example": "نور أحمد محمد"
+                        },
+                        "phone_number": {
+                          "type": "string",
+                          "example": "0501111111"
+                        },
+                        "doctor_name": {
+                          "type": "string",
+                          "example": "د. سارة أحمد - طبيبة جلدية"
+                        },
+                        "doctor_specialization": {
+                          "type": "string",
+                          "example": "جلدية وتجميل"
+                        },
+                        "date": {
+                          "type": "string",
+                          "format": "date",
+                          "example": "2025-09-17"
+                        },
+                        "time": {
+                          "type": "string",
+                          "example": "12:00"
+                        },
+                        "service_name": {
+                          "type": "string",
+                          "example": "استشارة جلدية"
+                        },
+                        "condition": {
+                          "type": "string",
+                          "example": "تم التنفيذ"
+                        },
+                        "payment_method": {
+                          "type": "string",
+                          "example": "نقدي"
+                        },
+                        "price": {
+                          "type": "number",
+                          "format": "float",
+                          "example": 200.00
+                        },
+                        "notes": {
+                          "type": "string",
+                          "example": "ملاحظات إضافية"
+                        },
+                        "payment_processed_by": {
+                          "type": "string",
+                          "example": "فاطمة محمد - موظف استقبال"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/appointments/by-date/{date}": {
+      "get": {
+        "tags": ["Appointments"],
+        "summary": "Get appointments by date",
+        "description": "Get appointments for a specific date",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {
+            "name": "date",
+            "in": "path",
+            "description": "Date in YYYY-MM-DD format",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "example": "2025-09-17"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
+    "/patients": {
+      "get": {
+        "tags": ["Patients"],
+        "summary": "Get all patients",
+        "description": "Get list of all patients with pagination and search",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number for pagination",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 1
+            }
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "description": "Number of items per page",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 15
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "description": "Search term for patient name or phone",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "تم جلب قائمة المرضى بنجاح"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Patient"
+                      }
+                    },
+                    "pagination": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/patients/{id}": {
+      "get": {
+        "tags": ["Patients"],
+        "summary": "Get patient details",
+        "description": "Get detailed information about a specific patient",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Patient ID",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "تم جلب بيانات المريض بنجاح"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Patient"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/clients": {
+      "get": {
+        "tags": ["Clients"],
+        "summary": "Get list of clients (patients)",
+        "description": "Retrieve a paginated list of clients matching the dashboard interface",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "description": "Search term for client name, phone, or national ID",
+            "required": false,
+            "schema": {"type": "string"}
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Filter by client status",
+            "required": false,
+            "schema": {"type": "string", "enum": ["active", "inactive", "suspended"]}
+          },
+          {
+            "name": "date",
+            "in": "query",
+            "description": "Filter by registration date",
+            "required": false,
+            "schema": {"type": "string", "format": "date"}
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number for pagination",
+            "required": false,
+            "schema": {"type": "integer", "default": 1}
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "description": "Number of items per page",
+            "required": false,
+            "schema": {"type": "integer", "default": 15}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {"type": "boolean", "example": true},
+                    "message": {"type": "string", "example": "تم جلب قائمة العملاء بنجاح"},
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {"type": "integer", "example": 1},
+                          "client_name": {"type": "string", "example": "أحمد حسين"},
+                          "phone_number": {"type": "string", "example": "01012345678"},
+                          "national_id": {"type": "string", "example": "22155338568"},
+                          "date_registered": {"type": "string", "example": "8 يونيو - 5:00م"},
+                          "visit_numbers": {"type": "string", "example": "3 زيارات"},
+                          "activity": {"type": "string", "example": "نشط"},
+                          "last_visit_date": {"type": "string", "example": "8 يونيو - 5:00م"}
+                        }
+                      }
+                    },
+                    "pagination": {"type": "object"}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/clients/{id}/details": {
+      "get": {
+        "tags": ["Clients"],
+        "summary": "Get client details",
+        "description": "Get comprehensive client details including personal info, loyalty points, reservation history, and notes",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Client ID",
+            "required": true,
+            "schema": {"type": "integer", "example": 1}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {"type": "boolean", "example": true},
+                    "message": {"type": "string", "example": "تم جلب تفاصيل العميل بنجاح"},
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "personal_information": {
+                          "type": "object",
+                          "properties": {
+                            "full_name": {"type": "string", "example": "أحمد حسين محمد"},
+                            "national_id": {"type": "string", "example": "22155338568"},
+                            "first_visit_date": {"type": "string", "example": "2025-01-15"},
+                            "phone_number": {"type": "string", "example": "01012345678"},
+                            "gender": {"type": "string", "example": "ذكر"},
+                            "last_activity": {"type": "string", "example": "2025-09-17 14:30"}
+                          }
+                        },
+                        "loyalty_points": {
+                          "type": "object",
+                          "properties": {
+                            "current_points": {"type": "integer", "example": 150},
+                            "last_used": {"type": "string", "example": "2025-09-10 10:00"}
+                          }
+                        },
+                        "reservation_history": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {"type": "integer", "example": 1},
+                              "date": {"type": "string", "example": "2025-09-17"},
+                              "service": {"type": "string", "example": "استشارة جلدية"},
+                              "doctor": {"type": "string", "example": "د. سارة أحمد"},
+                              "status": {"type": "string", "example": "تم التنفيذ"},
+                              "amount": {"type": "number", "example": 200.00}
+                            }
+                          }
+                        },
+                        "notes": {"type": "string", "example": "ملاحظات إضافية حول العميل"}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

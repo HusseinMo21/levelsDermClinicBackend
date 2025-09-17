@@ -1,0 +1,361 @@
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use App\Http\Requests\StorePatientRequest;
+use App\Http\Requests\UpdatePatientRequest;
+use App\Http\Resources\PatientResource;
+use App\Models\Patient;
+use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Str;
+
+/**
+ * @OA\Tag(name="Patients")
+ */
+class PatientController extends Controller
+{
+    public function __construct()
+    {
+        $this->middleware('auth:sanctum');
+        $this->middleware('permission:view-patients', ['only' => ['index', 'show']]);
+        $this->middleware('permission:create-patients', ['only' => ['store']]);
+        $this->middleware('permission:edit-patients', ['only' => ['update']]);
+        $this->middleware('permission:delete-patients', ['only' => ['destroy']]);
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/api/patients",
+     *     summary="Get list of patients",
+     *     description="Retrieve a paginated list of patients with search and filtering options",
+     *     tags={"Patients"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="search",
+     *         in="query",
+     *         description="Search by name, email, phone, or national ID",
+     *         required=false,
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Parameter(
+     *         name="status",
+     *         in="query",
+     *         description="Filter by patient status",
+     *         required=false,
+     *         @OA\Schema(type="string", enum={"active", "inactive", "blocked"})
+     *     ),
+     *     @OA\Parameter(
+     *         name="gender",
+     *         in="query",
+     *         description="Filter by gender",
+     *         required=false,
+     *         @OA\Schema(type="string", enum={"male", "female", "other"})
+     *     ),
+     *     @OA\Parameter(
+     *         name="per_page",
+     *         in="query",
+     *         description="Number of items per page",
+     *         required=false,
+     *         @OA\Schema(type="integer", default=15)
+     *     ),
+     *     @OA\Parameter(
+     *         name="page",
+     *         in="query",
+     *         description="Page number",
+     *         required=false,
+     *         @OA\Schema(type="integer", default=1)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Patients retrieved successfully"),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="array",
+     *                 @OA\Items(
+     *                     @OA\Property(property="id", type="integer", example=1),
+     *                     @OA\Property(property="patient_id", type="string", example="PAT000001"),
+     *                     @OA\Property(property="national_id", type="string", example="1234567890"),
+     *                     @OA\Property(property="first_name", type="string", example="Ahmed"),
+     *                     @OA\Property(property="last_name", type="string", example="Mohammed Ali"),
+     *                     @OA\Property(property="full_name", type="string", example="Ahmed Mohammed Ali"),
+     *                     @OA\Property(property="email", type="string", example="ahmed@example.com"),
+     *                     @OA\Property(property="phone", type="string", example="0501234567"),
+     *                     @OA\Property(property="gender", type="string", example="male"),
+     *                     @OA\Property(property="status", type="string", example="active"),
+     *                     @OA\Property(property="visit_count", type="integer", example=5)
+     *                 )
+     *             ),
+     *             @OA\Property(
+     *                 property="pagination",
+     *                 @OA\Property(property="current_page", type="integer", example=1),
+     *                 @OA\Property(property="per_page", type="integer", example=15),
+     *                 @OA\Property(property="total", type="integer", example=145),
+     *                 @OA\Property(property="last_page", type="integer", example=10)
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Unauthenticated.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Forbidden - Insufficient permissions",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Access denied."),
+     *             @OA\Property(property="error", type="string", example="Insufficient permissions")
+     *         )
+     *     )
+     * )
+     */
+    public function index(Request $request): JsonResponse
+    {
+        try {
+            $query = Patient::with(['createdBy']);
+
+            // Search functionality
+            if ($request->filled('search')) {
+                $search = $request->search;
+                $query->where(function ($q) use ($search) {
+                    $q->where('first_name', 'like', "%{$search}%")
+                      ->orWhere('last_name', 'like', "%{$search}%")
+                      ->orWhere('email', 'like', "%{$search}%")
+                      ->orWhere('phone', 'like', "%{$search}%")
+                      ->orWhere('national_id', 'like', "%{$search}%")
+                      ->orWhere('patient_id', 'like', "%{$search}%");
+                });
+            }
+
+            // Filter by status
+            if ($request->filled('status')) {
+                $query->where('status', $request->status);
+            }
+
+            // Filter by gender
+            if ($request->filled('gender')) {
+                $query->where('gender', $request->gender);
+            }
+
+            // Filter by date range
+            if ($request->filled('date_from')) {
+                $query->whereDate('created_at', '>=', $request->date_from);
+            }
+            if ($request->filled('date_to')) {
+                $query->whereDate('created_at', '<=', $request->date_to);
+            }
+
+            // Sort
+            $sortField = $request->get('sort_field', 'created_at');
+            $sortDirection = $request->get('sort_direction', 'desc');
+            $query->orderBy($sortField, $sortDirection);
+
+            // Pagination
+            $perPage = $request->get('per_page', 15);
+            $patients = $query->paginate($perPage);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'تم جلب قائمة المرضى بنجاح',
+                'data' => PatientResource::collection($patients->items()),
+                'pagination' => [
+                    'current_page' => $patients->currentPage(),
+                    'per_page' => $patients->perPage(),
+                    'total' => $patients->total(),
+                    'last_page' => $patients->lastPage(),
+                    'from' => $patients->firstItem(),
+                    'to' => $patients->lastItem(),
+                ]
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'حدث خطأ أثناء جلب قائمة المرضى',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * @OA\Post(
+     *     path="/api/patients",
+     *     summary="Create a new patient",
+     *     description="Create a new patient record with Arabic content support",
+     *     tags={"Patients"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"first_name", "last_name", "national_id", "email", "phone", "date_of_birth", "gender"},
+     *             @OA\Property(property="first_name", type="string", example="Ahmed", description="Patient's first name"),
+     *             @OA\Property(property="last_name", type="string", example="Mohammed Ali", description="Patient's last name"),
+     *             @OA\Property(property="national_id", type="string", example="1234567890", description="National ID number"),
+     *             @OA\Property(property="email", type="string", format="email", example="ahmed@example.com"),
+     *             @OA\Property(property="phone", type="string", example="0501234567"),
+     *             @OA\Property(property="phone_2", type="string", example="0501234568", description="Secondary phone number"),
+     *             @OA\Property(property="date_of_birth", type="string", format="date", example="1990-01-01"),
+     *             @OA\Property(property="gender", type="string", enum={"male", "female", "other"}, example="male"),
+     *             @OA\Property(property="address", type="string", example="Riyadh, Al-Narjis District", description="Patient address"),
+     *             @OA\Property(property="city", type="string", example="Riyadh"),
+     *             @OA\Property(property="state", type="string", example="Riyadh Region"),
+     *             @OA\Property(property="postal_code", type="string", example="12345"),
+     *             @OA\Property(property="country", type="string", example="Saudi Arabia"),
+     *             @OA\Property(property="emergency_contact_name", type="string", example="Fatima Mohammed"),
+     *             @OA\Property(property="emergency_contact_phone", type="string", example="0501234569"),
+     *             @OA\Property(property="medical_history", type="string", example="No medical history"),
+     *             @OA\Property(property="allergies", type="string", example="No known allergies"),
+     *             @OA\Property(property="current_medications", type="string", example="No current medications"),
+     *             @OA\Property(property="notes", type="string", example="Additional notes")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Patient created successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Patient created successfully"),
+     *             @OA\Property(
+     *                 property="data",
+     *                 @OA\Property(property="id", type="integer", example=1),
+     *                 @OA\Property(property="patient_id", type="string", example="PAT000001"),
+     *                 @OA\Property(property="first_name", type="string", example="Ahmed"),
+     *                 @OA\Property(property="last_name", type="string", example="Mohammed Ali"),
+     *                 @OA\Property(property="national_id", type="string", example="1234567890"),
+     *                 @OA\Property(property="email", type="string", example="ahmed@example.com"),
+     *                 @OA\Property(property="phone", type="string", example="0501234567"),
+     *                 @OA\Property(property="status", type="string", example="active")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Validation failed"),
+     *             @OA\Property(
+     *                 property="errors",
+     *                 @OA\Property(property="national_id", type="array", @OA\Items(type="string", example="National ID already exists")),
+     *                 @OA\Property(property="email", type="array", @OA\Items(type="string", example="Email already exists"))
+     *             )
+     *         )
+     *     )
+     * )
+     */
+    public function store(StorePatientRequest $request): JsonResponse
+    {
+        try {
+            $data = $request->validated();
+            
+            // Generate unique patient ID
+            $data['patient_id'] = $this->generatePatientId();
+            $data['created_by'] = auth()->id();
+
+            $patient = Patient::create($data);
+            $patient->load('createdBy');
+
+            return response()->json([
+                'success' => true,
+                'message' => 'تم إضافة المريض بنجاح',
+                'data' => new PatientResource($patient)
+            ], 201);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'حدث خطأ أثناء إضافة المريض',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(Patient $patient): JsonResponse
+    {
+        try {
+            $patient->load(['createdBy', 'appointments.doctor.user', 'appointments.service', 'payments']);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'تم جلب بيانات المريض بنجاح',
+                'data' => new PatientResource($patient)
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'حدث خطأ أثناء جلب بيانات المريض',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(UpdatePatientRequest $request, Patient $patient): JsonResponse
+    {
+        try {
+            $data = $request->validated();
+            $patient->update($data);
+            $patient->load('createdBy');
+
+            return response()->json([
+                'success' => true,
+                'message' => 'تم تحديث بيانات المريض بنجاح',
+                'data' => new PatientResource($patient)
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'حدث خطأ أثناء تحديث بيانات المريض',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(Patient $patient): JsonResponse
+    {
+        try {
+            $patient->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'تم حذف المريض بنجاح'
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'حدث خطأ أثناء حذف المريض',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Generate unique patient ID
+     */
+    private function generatePatientId(): string
+    {
+        do {
+            $patientId = 'PAT' . str_pad(rand(1, 999999), 6, '0', STR_PAD_LEFT);
+        } while (Patient::where('patient_id', $patientId)->exists());
+
+        return $patientId;
+    }
+}

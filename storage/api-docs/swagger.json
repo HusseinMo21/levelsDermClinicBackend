@@ -1,0 +1,614 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Levels Derm Clinic API",
+    "version": "1.0.0",
+    "description": "API for cosmetic clinic management system with Arabic support"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8000/api",
+      "description": "Local development server"
+    }
+  ],
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "Patient": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "patient_id": {
+            "type": "string",
+            "example": "PAT000001"
+          },
+          "national_id": {
+            "type": "string",
+            "example": "1234567890"
+          },
+          "first_name": {
+            "type": "string",
+            "example": "أحمد"
+          },
+          "last_name": {
+            "type": "string",
+            "example": "محمد علي"
+          },
+          "full_name": {
+            "type": "string",
+            "example": "أحمد محمد علي"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "ahmed@example.com"
+          },
+          "phone": {
+            "type": "string",
+            "example": "0501234567"
+          },
+          "gender": {
+            "type": "string",
+            "enum": ["male", "female", "other"],
+            "example": "male"
+          },
+          "status": {
+            "type": "string",
+            "example": "active"
+          },
+          "visit_count": {
+            "type": "integer",
+            "example": 5
+          }
+        }
+      },
+      "SuccessResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "تم جلب قائمة المرضى بنجاح"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Patient"
+            }
+          },
+          "pagination": {
+            "type": "object",
+            "properties": {
+              "current_page": {
+                "type": "integer",
+                "example": 1
+              },
+              "per_page": {
+                "type": "integer",
+                "example": 15
+              },
+              "total": {
+                "type": "integer",
+                "example": 145
+              },
+              "last_page": {
+                "type": "integer",
+                "example": 10
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/patients": {
+      "get": {
+        "tags": ["Patients"],
+        "summary": "Get list of patients",
+        "description": "Retrieve a paginated list of patients with search and filtering options",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "description": "Search by name, email, phone, or national ID",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Filter by patient status",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["active", "inactive", "blocked"]
+            }
+          },
+          {
+            "name": "gender",
+            "in": "query",
+            "description": "Filter by gender",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["male", "female", "other"]
+            }
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "description": "Number of items per page",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 15
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Unauthenticated."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Patients"],
+        "summary": "Create a new patient",
+        "description": "Create a new patient record with Arabic content support",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["first_name", "last_name", "national_id", "email", "phone", "date_of_birth", "gender"],
+                "properties": {
+                  "first_name": {
+                    "type": "string",
+                    "example": "أحمد",
+                    "description": "Patient's first name in Arabic"
+                  },
+                  "last_name": {
+                    "type": "string",
+                    "example": "محمد علي",
+                    "description": "Patient's last name in Arabic"
+                  },
+                  "national_id": {
+                    "type": "string",
+                    "example": "1234567890",
+                    "description": "National ID number"
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "example": "ahmed@example.com"
+                  },
+                  "phone": {
+                    "type": "string",
+                    "example": "0501234567"
+                  },
+                  "date_of_birth": {
+                    "type": "string",
+                    "format": "date",
+                    "example": "1990-01-01"
+                  },
+                  "gender": {
+                    "type": "string",
+                    "enum": ["male", "female", "other"],
+                    "example": "male"
+                  },
+                  "address": {
+                    "type": "string",
+                    "example": "الرياض، حي النرجس",
+                    "description": "Address in Arabic"
+                  },
+                  "city": {
+                    "type": "string",
+                    "example": "الرياض"
+                  },
+                  "medical_history": {
+                    "type": "string",
+                    "example": "لا يوجد تاريخ مرضي"
+                  },
+                  "allergies": {
+                    "type": "string",
+                    "example": "لا توجد حساسية"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Patient created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "تم إضافة المريض بنجاح"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Patient"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "البيانات المدخلة غير صحيحة"
+                    },
+                    "errors": {
+                      "type": "object",
+                      "properties": {
+                        "national_id": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "example": "رقم الهوية موجود مسبقاً"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/patients/{id}": {
+      "get": {
+        "tags": ["Patients"],
+        "summary": "Get patient details",
+        "description": "Get detailed information about a specific patient",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Patient ID",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "تم جلب بيانات المريض بنجاح"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Patient"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Patients"],
+        "summary": "Update patient",
+        "description": "Update patient information",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Patient ID",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "first_name": {
+                    "type": "string",
+                    "example": "أحمد"
+                  },
+                  "last_name": {
+                    "type": "string",
+                    "example": "محمد علي"
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "example": "ahmed@example.com"
+                  },
+                  "phone": {
+                    "type": "string",
+                    "example": "0501234567"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Patient updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "تم تحديث بيانات المريض بنجاح"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Patient"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Patients"],
+        "summary": "Delete patient",
+        "description": "Delete a patient record",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Patient ID",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Patient deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "تم حذف المريض بنجاح"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/dashboard/kpis": {
+      "get": {
+        "tags": ["Dashboard"],
+        "summary": "Get dashboard KPIs",
+        "description": "Get key performance indicators for the dashboard",
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "تم جلب مؤشرات الأداء بنجاح"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "total_patients": {
+                          "type": "integer",
+                          "example": 145
+                        },
+                        "total_doctors": {
+                          "type": "integer",
+                          "example": 19
+                        },
+                        "today_appointments": {
+                          "type": "integer",
+                          "example": 17
+                        },
+                        "today_payments": {
+                          "type": "number",
+                          "format": "float",
+                          "example": 3750.00
+                        },
+                        "monthly_revenue": {
+                          "type": "number",
+                          "format": "float",
+                          "example": 125000.00
+                        },
+                        "active_patients": {
+                          "type": "integer",
+                          "example": 120
+                        },
+                        "completed_appointments": {
+                          "type": "integer",
+                          "example": 15
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/dashboard/recent-appointments": {
+      "get": {
+        "tags": ["Dashboard"],
+        "summary": "Get recent appointments",
+        "description": "Get list of recent appointments for the dashboard",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Number of appointments to retrieve",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "تم جلب المواعيد الأخيرة بنجاح"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "example": 1
+                          },
+                          "patient_name": {
+                            "type": "string",
+                            "example": "أحمد محمد"
+                          },
+                          "doctor_name": {
+                            "type": "string",
+                            "example": "د. سارة أحمد"
+                          },
+                          "appointment_time": {
+                            "type": "string",
+                            "example": "12:00"
+                          },
+                          "status": {
+                            "type": "string",
+                            "example": "confirmed"
+                          },
+                          "total_amount": {
+                            "type": "number",
+                            "format": "float",
+                            "example": 500.00
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
