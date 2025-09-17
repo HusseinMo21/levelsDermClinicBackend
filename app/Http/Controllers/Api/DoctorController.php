@@ -14,7 +14,6 @@ use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
 
 /**
- * @OA\Tag(name="Doctors")
  */
 class DoctorController extends Controller
 {
@@ -262,64 +261,32 @@ class DoctorController extends Controller
     }
 
     /**
-     * @OA\Get(
      *     path="/api/doctors/{id}/info",
      *     summary="Get doctor comprehensive info",
      *     description="Get comprehensive doctor information including statistics, reservations, and tools used",
      *     tags={"Doctors"},
      *     security={{"bearerAuth":{}}},
-     *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         description="Doctor ID",
      *         required=true,
-     *         @OA\Schema(type="integer", example=1)
      *     ),
-     *     @OA\Response(
      *         response=200,
      *         description="Successful operation",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="تم جلب معلومات الطبيب بنجاح"),
-     *             @OA\Property(
      *                 property="data",
      *                 type="object",
-     *                 @OA\Property(
      *                     property="doctor_info",
      *                     type="object",
-     *                     @OA\Property(property="id", type="integer", example=1),
-     *                     @OA\Property(property="doctor_name", type="string", example="د/ محمد عبدالله أحمد"),
-     *                     @OA\Property(property="specialization", type="string", example="دكتور جلدية")
      *                 ),
-     *                 @OA\Property(
      *                     property="reservation_statistics",
      *                     type="object",
-     *                     @OA\Property(property="total_today", type="integer", example=15),
-     *                     @OA\Property(property="reservations_done", type="integer", example=8),
-     *                     @OA\Property(property="pending_reservations", type="integer", example=4),
-     *                     @OA\Property(property="reservations_left", type="integer", example=3)
      *                 ),
-     *                 @OA\Property(
      *                     property="reservations_table",
      *                     type="array",
-     *                     @OA\Items(
-     *                         @OA\Property(property="id", type="integer", example=1),
-     *                         @OA\Property(property="patient_name", type="string", example="أحمد محمد"),
-     *                         @OA\Property(property="time", type="string", example="10:00"),
-     *                         @OA\Property(property="service_name", type="string", example="استشارة جلدية"),
-     *                         @OA\Property(property="condition", type="string", example="تم التنفيذ"),
-     *                         @OA\Property(property="notes", type="string", example="ملاحظات إضافية")
      *                     )
      *                 ),
-     *                 @OA\Property(
      *                     property="tools_table",
      *                     type="array",
-     *                     @OA\Items(
-     *                         @OA\Property(property="id", type="integer", example=1),
-     *                         @OA\Property(property="tool_name", type="string", example="مشرط جراحي"),
-     *                         @OA\Property(property="quantity", type="integer", example=2),
-     *                         @OA\Property(property="date", type="string", example="2025-09-17"),
-     *                         @OA\Property(property="notes", type="string", example="لعملية تجميلية")
      *                     )
      *                 )
      *             )
@@ -444,76 +411,31 @@ class DoctorController extends Controller
     }
 
     /**
-     * @OA\Post(
      *     path="/api/doctors",
      *     summary="Create a new doctor",
      *     description="Create a new doctor with all required information including basic info, role, permissions, financial info, working days, and credentials",
      *     tags={"Doctors"},
      *     security={{"bearerAuth":{}}},
-     *     @OA\RequestBody(
      *         required=true,
-     *         @OA\JsonContent(
      *             required={"first_name","second_name","third_name","fourth_name","phone","national_id","email","address","role","permissions","monthly_salary","detection_value","doctor_percentage","working_days","username","password","password_confirmation","license_number","specialization","consultation_fee"},
-     *             @OA\Property(property="first_name", type="string", example="محمد"),
-     *             @OA\Property(property="second_name", type="string", example="عبدالله"),
-     *             @OA\Property(property="third_name", type="string", example="أحمد"),
-     *             @OA\Property(property="fourth_name", type="string", example="السعدي"),
-     *             @OA\Property(property="phone", type="string", example="0501234567"),
-     *             @OA\Property(property="national_id", type="string", example="1234567890"),
-     *             @OA\Property(property="email", type="string", example="doctor@example.com"),
-     *             @OA\Property(property="address", type="string", example="الرياض، حي النرجس"),
-     *             @OA\Property(property="role", type="string", example="doctor"),
-     *             @OA\Property(
      *                 property="permissions",
      *                 type="array",
-     *                 @OA\Items(type="string", enum={"see_patients","add_appointment","remove_appointment","add_registration","see_patient_reports"})
      *             ),
-     *             @OA\Property(property="monthly_salary", type="number", example=15000),
-     *             @OA\Property(property="detection_value", type="number", example=200),
-     *             @OA\Property(property="doctor_percentage", type="number", example=30),
-     *             @OA\Property(
      *                 property="working_days",
      *                 type="array",
-     *                 @OA\Items(
-     *                     @OA\Property(property="day", type="string", example="saturday"),
-     *                     @OA\Property(property="from_time", type="string", example="09:00"),
-     *                     @OA\Property(property="to_time", type="string", example="17:00"),
-     *                     @OA\Property(property="is_working", type="boolean", example=true)
      *                 )
      *             ),
-     *             @OA\Property(property="username", type="string", example="doctor123"),
-     *             @OA\Property(property="password", type="string", example="password123"),
-     *             @OA\Property(property="password_confirmation", type="string", example="password123"),
-     *             @OA\Property(property="license_number", type="string", example="DOC123456"),
-     *             @OA\Property(property="specialization", type="string", example="جلدية وتجميل"),
-     *             @OA\Property(property="consultation_fee", type="number", example=300)
      *         )
      *     ),
-     *     @OA\Response(
      *         response=201,
      *         description="Doctor created successfully",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="تم إنشاء الطبيب بنجاح"),
-     *             @OA\Property(
      *                 property="data",
      *                 type="object",
-     *                 @OA\Property(property="id", type="integer", example=1),
-     *                 @OA\Property(property="doctor_name", type="string", example="د/ محمد عبدالله أحمد السعدي"),
-     *                 @OA\Property(property="specialization", type="string", example="جلدية وتجميل"),
-     *                 @OA\Property(property="license_number", type="string", example="DOC123456"),
-     *                 @OA\Property(property="email", type="string", example="doctor@example.com"),
-     *                 @OA\Property(property="phone", type="string", example="0501234567")
      *             )
      *         )
      *     ),
-     *     @OA\Response(
      *         response=422,
      *         description="Validation error",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="بيانات غير صحيحة"),
-     *             @OA\Property(property="errors", type="object")
      *         )
      *     )
      * )

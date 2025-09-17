@@ -14,7 +14,6 @@ use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
 
 /**
- * @OA\Tag(name="Appointments")
  */
 class AppointmentController extends Controller
 {
@@ -24,13 +23,11 @@ class AppointmentController extends Controller
     }
 
     /**
-     * @OA\Get(
      *     path="/api/appointments",
      *     summary="Get all appointments",
      *     description="Get list of all appointments with operation number, patient name, service name, price, payment method, date, and notes",
      *     tags={"Appointments"},
      *     security={{"bearerAuth":{}}},
-     *     @OA\Response(
      *         response=200,
      *         description="Successful operation"
      *     )

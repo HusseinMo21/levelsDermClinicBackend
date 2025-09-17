@@ -1390,6 +1390,454 @@
           }
         }
       }
+    },
+    "/inventory/dashboard": {
+      "get": {
+        "tags": ["Inventory For Admin View"],
+        "summary": "Get inventory dashboard data for admin",
+        "description": "Get inventory dashboard with KPIs, notifications, and recent withdrawals - Admin only",
+        "security": [{"bearerAuth": []}],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {"type": "boolean", "example": true},
+                    "message": {"type": "string", "example": "تم جلب بيانات المخزن بنجاح"},
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "kpis": {
+                          "type": "object",
+                          "properties": {
+                            "total_tools": {"type": "integer", "example": 350},
+                            "categories": {"type": "integer", "example": 25},
+                            "expired_categories": {"type": "integer", "example": 250},
+                            "new_tool_requests": {"type": "integer", "example": 560},
+                            "pending_supply_orders": {"type": "integer", "example": 240}
+                          }
+                        },
+                        "notifications": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {"type": "integer", "example": 1},
+                              "title": {"type": "string", "example": "سحب أداة"},
+                              "message": {"type": "string", "example": "تم سحب 20 وحدة من القفازات"},
+                              "type": {"type": "string", "example": "withdrawal"},
+                              "priority": {"type": "string", "example": "medium"},
+                              "is_read": {"type": "boolean", "example": false},
+                              "created_at": {"type": "string", "example": "2025-09-17T10:30:00Z"},
+                              "time_ago": {"type": "string", "example": "22 minutes ago"}
+                            }
+                          }
+                        },
+                        "recent_withdrawals": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {"type": "integer", "example": 1},
+                              "tool_name": {"type": "string", "example": "شاش"},
+                              "operation": {"type": "string", "example": "8 يونيو - 5:00م"},
+                              "date": {"type": "string", "example": "11/12/2025"},
+                              "used_by": {"type": "string", "example": "د- محمد علاء"},
+                              "quantity": {"type": "integer", "example": 250},
+                              "notes": {"type": "string", "example": "لعملية تجميلية"}
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/inventory/withdrawals": {
+      "get": {
+        "tags": ["Inventory For Admin View"],
+        "summary": "Get drawn tools table for admin",
+        "description": "Get paginated list of tool withdrawals with search and filters - Admin only",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "description": "Search term for tool name or operation",
+            "required": false,
+            "schema": {"type": "string"}
+          },
+          {
+            "name": "doctor_id",
+            "in": "query",
+            "description": "Filter by doctor ID",
+            "required": false,
+            "schema": {"type": "integer"}
+          },
+          {
+            "name": "date",
+            "in": "query",
+            "description": "Filter by withdrawal date (YYYY-MM-DD)",
+            "required": false,
+            "schema": {"type": "string", "format": "date"}
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number for pagination",
+            "required": false,
+            "schema": {"type": "integer", "default": 1}
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "description": "Number of items per page",
+            "required": false,
+            "schema": {"type": "integer", "default": 15}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {"type": "boolean", "example": true},
+                    "message": {"type": "string", "example": "تم جلب جدول الأدوات المسحوبة بنجاح"},
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {"type": "integer", "example": 1},
+                          "tool_name": {"type": "string", "example": "شاش"},
+                          "operation": {"type": "string", "example": "8 يونيو - 5:00م"},
+                          "date": {"type": "string", "example": "11/12/2025"},
+                          "used_by": {"type": "string", "example": "د- محمد علاء"},
+                          "quantity": {"type": "integer", "example": 250},
+                          "notes": {"type": "string", "example": "لعملية تجميلية"}
+                        }
+                      }
+                    },
+                    "pagination": {"type": "object"}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/inventory/notifications": {
+      "get": {
+        "tags": ["Inventory For Admin View"],
+        "summary": "Get inventory notifications for admin",
+        "description": "Get paginated list of inventory notifications - Admin only",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {
+            "name": "type",
+            "in": "query",
+            "description": "Filter by notification type",
+            "required": false,
+            "schema": {"type": "string", "enum": ["withdrawal", "supply_request", "low_stock", "expired_item", "new_request"]}
+          },
+          {
+            "name": "priority",
+            "in": "query",
+            "description": "Filter by priority",
+            "required": false,
+            "schema": {"type": "string", "enum": ["low", "medium", "high", "urgent"]}
+          },
+          {
+            "name": "is_read",
+            "in": "query",
+            "description": "Filter by read status",
+            "required": false,
+            "schema": {"type": "boolean"}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {"type": "boolean", "example": true},
+                    "message": {"type": "string", "example": "تم جلب الإشعارات بنجاح"},
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {"type": "integer", "example": 1},
+                          "title": {"type": "string", "example": "سحب أداة"},
+                          "message": {"type": "string", "example": "تم سحب 20 وحدة من القفازات"},
+                          "type": {"type": "string", "example": "withdrawal"},
+                          "priority": {"type": "string", "example": "medium"},
+                          "is_read": {"type": "boolean", "example": false},
+                          "created_at": {"type": "string", "example": "2025-09-17T10:30:00Z"},
+                          "time_ago": {"type": "string", "example": "22 minutes ago"}
+                        }
+                      }
+                    },
+                    "pagination": {"type": "object"}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/inventory/requests": {
+      "get": {
+        "tags": ["Inventory For Admin View"],
+        "summary": "Get withdrawal requests table for admin",
+        "description": "Get paginated list of tool withdrawal requests from doctors with search and filters - Admin only",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "description": "Search term for request number, doctor name, or tool name",
+            "required": false,
+            "schema": {"type": "string"}
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Filter by request status",
+            "required": false,
+            "schema": {"type": "string", "enum": ["pending", "approved", "rejected", "fulfilled"]}
+          },
+          {
+            "name": "date",
+            "in": "query",
+            "description": "Filter by request date (YYYY-MM-DD)",
+            "required": false,
+            "schema": {"type": "string", "format": "date"}
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number for pagination",
+            "required": false,
+            "schema": {"type": "integer", "default": 1}
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "description": "Number of items per page",
+            "required": false,
+            "schema": {"type": "integer", "default": 15}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {"type": "boolean", "example": true},
+                    "message": {"type": "string", "example": "تم جلب جدول الطلبات بنجاح"},
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {"type": "integer", "example": 1},
+                          "request_number": {"type": "string", "example": "#124"},
+                          "doctor_name": {"type": "string", "example": "د محمد سامي"},
+                          "requested_tool": {"type": "string", "example": "كحول طبي"},
+                          "quantity": {"type": "integer", "example": 250},
+                          "date": {"type": "string", "example": "11/12/2025"},
+                          "condition": {"type": "string", "example": "جديد"},
+                          "status": {"type": "string", "example": "pending"},
+                          "reason": {"type": "string", "example": "لعملية تجميلية"},
+                          "created_at": {"type": "string", "example": "2025-09-17T10:30:00Z"}
+                        }
+                      }
+                    },
+                    "pagination": {"type": "object"}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/inventory/expired": {
+      "get": {
+        "tags": ["Inventory For Admin View"],
+        "summary": "Get expired items for admin",
+        "description": "Get expired and nearly expired inventory items with real data alert - Admin only",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "description": "Search term for tool name or category",
+            "required": false,
+            "schema": {"type": "string"}
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "description": "Filter by category",
+            "required": false,
+            "schema": {"type": "string"}
+          },
+          {
+            "name": "date",
+            "in": "query",
+            "description": "Filter by expiry date (YYYY-MM-DD)",
+            "required": false,
+            "schema": {"type": "string", "format": "date"}
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number for pagination",
+            "required": false,
+            "schema": {"type": "integer", "default": 1}
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "description": "Number of items per page",
+            "required": false,
+            "schema": {"type": "integer", "default": 15}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {"type": "boolean", "example": true},
+                    "message": {"type": "string", "example": "تم جلب الاصناف المنتهية بنجاح"},
+                    "alert": {
+                      "type": "object",
+                      "properties": {
+                        "completely_expired": {"type": "integer", "example": 3},
+                        "nearly_expired": {"type": "integer", "example": 2},
+                        "message": {"type": "string", "example": "يوجد 3 أدوات منتهية تمامًا و2 أدوات على وشك النفاد. يرجى مراجعة المخزون وإرسال طلبات التوريد اللازمة في أسرع وقت"}
+                      }
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {"type": "integer", "example": 1},
+                          "tool_name": {"type": "string", "example": "جوانتيات طبية"},
+                          "category": {"type": "string", "example": "أدوات حماية"},
+                          "remaining_quantity": {"type": "integer", "example": 250},
+                          "last_used_date": {"type": "string", "example": "11/12/2025"},
+                          "expiry_status": {"type": "string", "example": "expired"},
+                          "expiry_date": {"type": "string", "example": "2025-09-15"},
+                          "days_until_expiry": {"type": "integer", "example": -5}
+                        }
+                      }
+                    },
+                    "pagination": {"type": "object"}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/inventory/items": {
+      "post": {
+        "tags": ["Inventory For Admin View"],
+        "summary": "Create New Tool",
+        "description": "Create a new tool/item in the inventory system with essential information only - Admin only",
+        "security": [{"bearerAuth": []}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["name","category","quantity","date","supplier"],
+                "properties": {
+                  "name": {"type": "string", "example": "شاش طبي"},
+                  "category": {"type": "string", "example": "مواد طبية"},
+                  "quantity": {"type": "integer", "example": 100},
+                  "date": {"type": "string", "format": "date", "example": "2025-09-17"},
+                  "supplier": {"type": "string", "example": "شركة الأدوات الطبية"},
+                  "notes": {"type": "string", "example": "شاش طبي معقم عالي الجودة"}
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Tool created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {"type": "boolean", "example": true},
+                    "message": {"type": "string", "example": "تم إضافة الأداة بنجاح"},
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {"type": "integer", "example": 1},
+                        "item_code": {"type": "string", "example": "ITM007"},
+                        "name": {"type": "string", "example": "شاش طبي"},
+                        "category": {"type": "string", "example": "مواد طبية"},
+                        "quantity": {"type": "integer", "example": 100},
+                        "supplier": {"type": "string", "example": "شركة الأدوات الطبية"},
+                        "date_added": {"type": "string", "example": "2025-09-17"},
+                        "notes": {"type": "string", "example": "شاش طبي معقم عالي الجودة"}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {"type": "boolean", "example": false},
+                    "message": {"type": "string", "example": "بيانات غير صحيحة"},
+                    "errors": {"type": "object"}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   }
 }

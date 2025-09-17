@@ -49,7 +49,8 @@ class SimpleExampleDataSeeder extends Seeder
         $admin = User::firstOrCreate(
             ['email' => 'admin@levelsderm.com'],
             [
-                'name' => 'أحمد صالح - مدير النظام',
+                'name' => 'admin',
+                'display_name' => 'أحمد صالح - مدير النظام',
                 'email' => 'admin@levelsderm.com',
                 'password' => Hash::make('password123'),
                 'phone' => '0501234567',
@@ -62,7 +63,8 @@ class SimpleExampleDataSeeder extends Seeder
         $receptionist = User::firstOrCreate(
             ['email' => 'receptionist@levelsderm.com'],
             [
-                'name' => 'فاطمة محمد - موظف استقبال',
+                'name' => 'receptionist',
+                'display_name' => 'فاطمة محمد - موظف استقبال',
                 'email' => 'receptionist@levelsderm.com',
                 'password' => Hash::make('password123'),
                 'phone' => '0501234568',
@@ -75,7 +77,8 @@ class SimpleExampleDataSeeder extends Seeder
         $doctor = User::firstOrCreate(
             ['email' => 'doctor@levelsderm.com'],
             [
-                'name' => 'د. سارة أحمد - طبيبة جلدية',
+                'name' => 'sara.doctor',
+                'display_name' => 'د. سارة أحمد - طبيبة جلدية',
                 'email' => 'doctor@levelsderm.com',
                 'password' => Hash::make('password123'),
                 'phone' => '0501234569',
@@ -88,7 +91,8 @@ class SimpleExampleDataSeeder extends Seeder
         $inventory = User::firstOrCreate(
             ['email' => 'inventory@levelsderm.com'],
             [
-                'name' => 'خالد علي - مدير المخزن',
+                'name' => 'inventory.manager',
+                'display_name' => 'خالد علي - مدير المخزن',
                 'email' => 'inventory@levelsderm.com',
                 'password' => Hash::make('password123'),
                 'phone' => '0501234570',
@@ -101,7 +105,8 @@ class SimpleExampleDataSeeder extends Seeder
         $customerService = User::firstOrCreate(
             ['email' => 'customerservice@levelsderm.com'],
             [
-                'name' => 'نورا حسن - خدمة العملاء',
+                'name' => 'customer.service',
+                'display_name' => 'نورا حسن - خدمة العملاء',
                 'email' => 'customerservice@levelsderm.com',
                 'password' => Hash::make('password123'),
                 'phone' => '0501234571',
@@ -114,7 +119,8 @@ class SimpleExampleDataSeeder extends Seeder
         $patient = User::firstOrCreate(
             ['email' => 'patient@levelsderm.com'],
             [
-                'name' => 'مريم عبدالله - مريضة',
+                'name' => 'patient.user',
+                'display_name' => 'مريم عبدالله - مريضة',
                 'email' => 'patient@levelsderm.com',
                 'password' => Hash::make('password123'),
                 'phone' => '0501234572',

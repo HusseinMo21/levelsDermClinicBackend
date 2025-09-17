@@ -7,17 +7,14 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
 /**
- * @OA\Tag(name="Test")
  */
 class TestController extends Controller
 {
     /**
-     * @OA\Get(
      *     path="/api/test",
      *     summary="Test endpoint",
      *     description="Simple test endpoint",
      *     tags={"Test"},
-     *     @OA\Response(
      *         response=200,
      *         description="Success"
      *     )

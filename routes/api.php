@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\ServiceController;
 use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\DoctorController;
+use App\Http\Controllers\Api\InventoryController;
 use App\Http\Controllers\Api\AuthController;
 
 /*
@@ -62,12 +63,20 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/clients', [PatientController::class, 'clients']);
         Route::get('/clients/{id}/details', [PatientController::class, 'clientDetails']);
         
-        // Doctor Management API - Admin only
-        Route::get('/doctors/specializations', [DoctorController::class, 'getSpecializations']);
-        Route::get('/doctors/search/{term}', [DoctorController::class, 'search']);
-        Route::get('/doctors/by-specialization/{specialization}', [DoctorController::class, 'getBySpecialization']);
-        Route::get('/doctors/{id}/info', [DoctorController::class, 'getDoctorInfo']);
-        Route::apiResource('doctors', DoctorController::class);
+                // Doctor Management API - Admin only
+                Route::get('/doctors/specializations', [DoctorController::class, 'getSpecializations']);
+                Route::get('/doctors/search/{term}', [DoctorController::class, 'search']);
+                Route::get('/doctors/by-specialization/{specialization}', [DoctorController::class, 'getBySpecialization']);
+                Route::get('/doctors/{id}/info', [DoctorController::class, 'getDoctorInfo']);
+                Route::apiResource('doctors', DoctorController::class);
+                
+                // Inventory Management API - Admin only
+                Route::get('/inventory/dashboard', [InventoryController::class, 'getDashboard']);
+                Route::get('/inventory/withdrawals', [InventoryController::class, 'getWithdrawals']);
+                Route::get('/inventory/notifications', [InventoryController::class, 'getNotifications']);
+                Route::get('/inventory/requests', [InventoryController::class, 'getRequests']);
+                Route::get('/inventory/expired', [InventoryController::class, 'getExpiredItems']);
+                Route::post('/inventory/items', [InventoryController::class, 'store']);
     });
 
     Route::middleware('role:receptionist')->group(function () {

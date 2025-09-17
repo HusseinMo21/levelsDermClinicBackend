@@ -11,25 +11,18 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
 /**
- * @OA\Tag(name="Authentication")
  */
 class AuthController extends Controller
 {
     /**
-     * @OA\Post(
      *     path="/api/auth/login",
      *     summary="User login",
      *     description="Authenticate user and return access token",
      *     tags={"Authentication"},
-     *     @OA\RequestBody(
      *         required=true,
-     *         @OA\JsonContent(
      *             required={"email", "password"},
-     *             @OA\Property(property="email", type="string", format="email", example="admin@levelsderm.com"),
-     *             @OA\Property(property="password", type="string", example="password123")
      *         )
      *     ),
-     *     @OA\Response(
      *         response=200,
      *         description="Login successful"
      *     )

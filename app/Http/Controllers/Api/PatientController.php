@@ -11,9 +11,6 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Str;
 
-/**
- * @OA\Tag(name="Patients")
- */
 class PatientController extends Controller
 {
     public function __construct()
@@ -21,73 +18,6 @@ class PatientController extends Controller
         $this->middleware('auth:sanctum');
     }
 
-    /**
-     * @OA\Get(
-     *     path="/api/clients",
-     *     summary="Get list of clients (patients)",
-     *     description="Retrieve a paginated list of clients matching the dashboard interface",
-     *     tags={"Clients"},
-     *     security={{"bearerAuth":{}}},
-     *     @OA\Parameter(
-     *         name="search",
-     *         in="query",
-     *         description="Search term for client name, phone, or national ID",
-     *         required=false,
-     *         @OA\Schema(type="string")
-     *     ),
-     *     @OA\Parameter(
-     *         name="status",
-     *         in="query",
-     *         description="Filter by client status",
-     *         required=false,
-     *         @OA\Schema(type="string", enum={"active", "inactive", "suspended"})
-     *     ),
-     *     @OA\Parameter(
-     *         name="date",
-     *         in="query",
-     *         description="Filter by registration date",
-     *         required=false,
-     *         @OA\Schema(type="string", format="date")
-     *     ),
-     *     @OA\Parameter(
-     *         name="page",
-     *         in="query",
-     *         description="Page number for pagination",
-     *         required=false,
-     *         @OA\Schema(type="integer", default=1)
-     *     ),
-     *     @OA\Parameter(
-     *         name="per_page",
-     *         in="query",
-     *         description="Number of items per page",
-     *         required=false,
-     *         @OA\Schema(type="integer", default=15)
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Successful operation",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="تم جلب قائمة العملاء بنجاح"),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="array",
-     *                 @OA\Items(
-     *                     @OA\Property(property="id", type="integer", example=1),
-     *                     @OA\Property(property="client_name", type="string", example="أحمد حسين"),
-     *                     @OA\Property(property="phone_number", type="string", example="01012345678"),
-     *                     @OA\Property(property="national_id", type="string", example="22155338568"),
-     *                     @OA\Property(property="date_registered", type="string", example="8 يونيو - 5:00م"),
-     *                     @OA\Property(property="visit_numbers", type="string", example="3 زيارات"),
-     *                     @OA\Property(property="activity", type="string", example="نشط"),
-     *                     @OA\Property(property="last_visit_date", type="string", example="8 يونيو - 5:00م")
-     *                 )
-     *             ),
-     *             @OA\Property(property="pagination", type="object")
-     *         )
-     *     )
-     * )
-     */
     public function clients(Request $request): JsonResponse
     {
         try {
@@ -175,63 +105,6 @@ class PatientController extends Controller
         }
     }
 
-    /**
-     * @OA\Get(
-     *     path="/api/clients/{id}/details",
-     *     summary="Get client details",
-     *     description="Get comprehensive client details including personal info, loyalty points, reservation history, and notes",
-     *     tags={"Clients"},
-     *     security={{"bearerAuth":{}}},
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         description="Client ID",
-     *         required=true,
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Successful operation",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="تم جلب تفاصيل العميل بنجاح"),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(
-     *                     property="personal_information",
-     *                     type="object",
-     *                     @OA\Property(property="full_name", type="string", example="أحمد حسين محمد"),
-     *                     @OA\Property(property="national_id", type="string", example="22155338568"),
-     *                     @OA\Property(property="first_visit_date", type="string", example="2025-01-15"),
-     *                     @OA\Property(property="phone_number", type="string", example="01012345678"),
-     *                     @OA\Property(property="gender", type="string", example="ذكر"),
-     *                     @OA\Property(property="last_activity", type="string", example="2025-09-17 14:30")
-     *                 ),
-     *                 @OA\Property(
-     *                     property="loyalty_points",
-     *                     type="object",
-     *                     @OA\Property(property="current_points", type="integer", example=150),
-     *                     @OA\Property(property="last_used", type="string", example="2025-09-10 10:00")
-     *                 ),
-     *                 @OA\Property(
-     *                     property="reservation_history",
-     *                     type="array",
-     *                     @OA\Items(
-     *                         @OA\Property(property="id", type="integer", example=1),
-     *                         @OA\Property(property="date", type="string", example="2025-09-17"),
-     *                         @OA\Property(property="service", type="string", example="استشارة جلدية"),
-     *                         @OA\Property(property="doctor", type="string", example="د. سارة أحمد"),
-     *                         @OA\Property(property="status", type="string", example="تم التنفيذ"),
-     *                         @OA\Property(property="amount", type="number", example=200.00)
-     *                     )
-     *                 ),
-     *                 @OA\Property(property="notes", type="string", example="ملاحظات إضافية حول العميل")
-     *             )
-     *         )
-     *     )
-     * )
-     */
     public function clientDetails(int $id): JsonResponse
     {
         try {
@@ -307,19 +180,6 @@ class PatientController extends Controller
         }
     }
 
-    /**
-     * @OA\Get(
-     *     path="/api/patients",
-     *     summary="Get list of patients",
-     *     description="Retrieve a paginated list of patients",
-     *     tags={"Patients"},
-     *     security={{"bearerAuth":{}}},
-     *     @OA\Response(
-     *         response=200,
-     *         description="Successful operation"
-     *     )
-     * )
-     */
     public function index(Request $request): JsonResponse
     {
         try {
@@ -375,19 +235,6 @@ class PatientController extends Controller
         }
     }
 
-    /**
-     * @OA\Post(
-     *     path="/api/patients",
-     *     summary="Create a new patient",
-     *     description="Create a new patient record",
-     *     tags={"Patients"},
-     *     security={{"bearerAuth":{}}},
-     *     @OA\Response(
-     *         response=201,
-     *         description="Patient created successfully"
-     *     )
-     * )
-     */
     public function store(StorePatientRequest $request): JsonResponse
     {
         try {
@@ -413,26 +260,6 @@ class PatientController extends Controller
         }
     }
 
-    /**
-     * @OA\Get(
-     *     path="/api/patients/{id}",
-     *     summary="Get patient details",
-     *     description="Get detailed information about a specific patient",
-     *     tags={"Patients"},
-     *     security={{"bearerAuth":{}}},
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         description="Patient ID",
-     *         required=true,
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Successful operation"
-     *     )
-     * )
-     */
     public function show(Patient $patient): JsonResponse
     {
         try {
@@ -453,26 +280,6 @@ class PatientController extends Controller
         }
     }
 
-    /**
-     * @OA\Put(
-     *     path="/api/patients/{id}",
-     *     summary="Update patient",
-     *     description="Update patient information",
-     *     tags={"Patients"},
-     *     security={{"bearerAuth":{}}},
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         description="Patient ID",
-     *         required=true,
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Patient updated successfully"
-     *     )
-     * )
-     */
     public function update(UpdatePatientRequest $request, Patient $patient): JsonResponse
     {
         try {
@@ -495,26 +302,6 @@ class PatientController extends Controller
         }
     }
 
-    /**
-     * @OA\Delete(
-     *     path="/api/patients/{id}",
-     *     summary="Delete patient",
-     *     description="Delete a patient record",
-     *     tags={"Patients"},
-     *     security={{"bearerAuth":{}}},
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         description="Patient ID",
-     *         required=true,
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Patient deleted successfully"
-     *     )
-     * )
-     */
     public function destroy(Patient $patient): JsonResponse
     {
         try {

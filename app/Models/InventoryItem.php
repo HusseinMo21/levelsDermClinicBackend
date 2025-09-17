@@ -19,6 +19,8 @@ class InventoryItem extends Model
         'subcategory',
         'unit_of_measure',
         'unit_cost',
+        'current_stock',
+        'unit_price',
         'minimum_stock_level',
         'maximum_stock_level',
         'has_expiry_date',
@@ -28,12 +30,16 @@ class InventoryItem extends Model
         'usage_instructions',
         'contraindications',
         'is_active',
+        'status',
+        'storage_location',
+        'supplier_id',
         'notes',
         'created_by',
     ];
 
     protected $casts = [
         'unit_cost' => 'decimal:2',
+        'unit_price' => 'decimal:2',
         'has_expiry_date' => 'boolean',
         'requires_prescription' => 'boolean',
         'contraindications' => 'array',
@@ -54,6 +60,21 @@ class InventoryItem extends Model
     public function doctorRequests(): HasMany
     {
         return $this->hasMany(DoctorRequest::class);
+    }
+
+    public function toolRequests(): HasMany
+    {
+        return $this->hasMany(ToolRequest::class);
+    }
+
+    public function toolWithdrawals(): HasMany
+    {
+        return $this->hasMany(ToolWithdrawal::class);
+    }
+
+    public function supplier(): BelongsTo
+    {
+        return $this->belongsTo(Supplier::class);
     }
 
     // Accessors
@@ -85,7 +106,7 @@ class InventoryItem extends Model
         })->whereRaw('(
             SELECT SUM(quantity_remaining) 
             FROM inventory_batches 
-            WHERE inventory_item_id = inventory_items.id AND status = 'active'
+            WHERE inventory_item_id = inventory_items.id AND status = "active"
         ) <= minimum_stock_level');
     }
 }

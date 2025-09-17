@@ -12,7 +12,6 @@ use Illuminate\Http\JsonResponse;
 use Carbon\Carbon;
 
 /**
- * @OA\Tag(name="Dashboard")
  */
 class DashboardController extends Controller
 {
@@ -22,27 +21,14 @@ class DashboardController extends Controller
     }
 
     /**
-     * @OA\Get(
      *     path="/api/dashboard/kpis",
      *     summary="Get dashboard KPIs",
      *     description="Get key performance indicators for the dashboard",
      *     tags={"Dashboard"},
      *     security={{"bearerAuth":{}}},
-     *     @OA\Response(
      *         response=200,
      *         description="Successful operation",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="KPIs retrieved successfully"),
-     *             @OA\Property(
      *                 property="data",
-     *                 @OA\Property(property="total_patients", type="integer", example=145),
-     *                 @OA\Property(property="total_doctors", type="integer", example=19),
-     *                 @OA\Property(property="today_appointments", type="integer", example=17),
-     *                 @OA\Property(property="today_payments", type="number", format="float", example=3750.00),
-     *                 @OA\Property(property="monthly_revenue", type="number", format="float", example=125000.00),
-     *                 @OA\Property(property="active_patients", type="integer", example=120),
-     *                 @OA\Property(property="completed_appointments", type="integer", example=15)
      *             )
      *         )
      *     )
@@ -78,35 +64,20 @@ class DashboardController extends Controller
     }
 
     /**
-     * @OA\Get(
      *     path="/api/dashboard/recent-appointments",
      *     summary="Get recent appointments",
      *     description="Get list of recent appointments for the dashboard",
      *     tags={"Dashboard"},
      *     security={{"bearerAuth":{}}},
-     *     @OA\Parameter(
      *         name="limit",
      *         in="query",
      *         description="Number of appointments to retrieve",
      *         required=false,
-     *         @OA\Schema(type="integer", default=10)
      *     ),
-     *     @OA\Response(
      *         response=200,
      *         description="Successful operation",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Recent appointments retrieved successfully"),
-     *             @OA\Property(
      *                 property="data",
      *                 type="array",
-     *                 @OA\Items(
-     *                     @OA\Property(property="id", type="integer", example=1),
-     *                     @OA\Property(property="patient_name", type="string", example="Ahmed Mohammed"),
-     *                     @OA\Property(property="doctor_name", type="string", example="Dr. Sarah Ahmed"),
-     *                     @OA\Property(property="appointment_time", type="string", example="12:00"),
-     *                     @OA\Property(property="status", type="string", example="confirmed"),
-     *                     @OA\Property(property="payment_method", type="string", example="cash")
      *                 )
      *             )
      *         )
@@ -169,28 +140,15 @@ class DashboardController extends Controller
     }
 
     /**
-     * @OA\Get(
      *     path="/api/dashboard/today-appointments",
      *     summary="Get today's appointments",
      *     description="Get list of today's appointments with patient, doctor, time, status, and payment method",
      *     tags={"Dashboard"},
      *     security={{"bearerAuth":{}}},
-     *     @OA\Response(
      *         response=200,
      *         description="Successful operation",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="تم جلب مواعيد اليوم بنجاح"),
-     *             @OA\Property(
      *                 property="data",
      *                 type="array",
-     *                 @OA\Items(
-     *                     @OA\Property(property="id", type="integer", example=1),
-     *                     @OA\Property(property="patient_name", type="string", example="نور أحمد"),
-     *                     @OA\Property(property="doctor_name", type="string", example="د. محمد حسن"),
-     *                     @OA\Property(property="appointment_time", type="string", example="12:00"),
-     *                     @OA\Property(property="status", type="string", example="تم التنفيذ"),
-     *                     @OA\Property(property="payment_method", type="string", example="نقدي")
      *                 )
      *             )
      *         )

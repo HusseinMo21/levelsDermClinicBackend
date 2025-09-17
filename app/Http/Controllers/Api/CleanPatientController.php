@@ -12,7 +12,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Str;
 
 /**
- * @OA\Tag(name="Patients")
  */
 class CleanPatientController extends Controller
 {
@@ -22,13 +21,11 @@ class CleanPatientController extends Controller
     }
 
     /**
-     * @OA\Get(
      *     path="/api/patients",
      *     summary="Get list of patients",
      *     description="Retrieve a paginated list of patients",
      *     tags={"Patients"},
      *     security={{"bearerAuth":{}}},
-     *     @OA\Response(
      *         response=200,
      *         description="Successful operation"
      *     )
@@ -90,13 +87,11 @@ class CleanPatientController extends Controller
     }
 
     /**
-     * @OA\Post(
      *     path="/api/patients",
      *     summary="Create a new patient",
      *     description="Create a new patient record",
      *     tags={"Patients"},
      *     security={{"bearerAuth":{}}},
-     *     @OA\Response(
      *         response=201,
      *         description="Patient created successfully"
      *     )
@@ -128,20 +123,16 @@ class CleanPatientController extends Controller
     }
 
     /**
-     * @OA\Get(
      *     path="/api/patients/{id}",
      *     summary="Get patient details",
      *     description="Get detailed information about a specific patient",
      *     tags={"Patients"},
      *     security={{"bearerAuth":{}}},
-     *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         description="Patient ID",
      *         required=true,
-     *         @OA\Schema(type="integer")
      *     ),
-     *     @OA\Response(
      *         response=200,
      *         description="Successful operation"
      *     )
@@ -168,20 +159,16 @@ class CleanPatientController extends Controller
     }
 
     /**
-     * @OA\Put(
      *     path="/api/patients/{id}",
      *     summary="Update patient",
      *     description="Update patient information",
      *     tags={"Patients"},
      *     security={{"bearerAuth":{}}},
-     *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         description="Patient ID",
      *         required=true,
-     *         @OA\Schema(type="integer")
      *     ),
-     *     @OA\Response(
      *         response=200,
      *         description="Patient updated successfully"
      *     )
@@ -210,20 +197,16 @@ class CleanPatientController extends Controller
     }
 
     /**
-     * @OA\Delete(
      *     path="/api/patients/{id}",
      *     summary="Delete patient",
      *     description="Delete a patient record",
      *     tags={"Patients"},
      *     security={{"bearerAuth":{}}},
-     *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         description="Patient ID",
      *         required=true,
-     *         @OA\Schema(type="integer")
      *     ),
-     *     @OA\Response(
      *         response=200,
      *         description="Patient deleted successfully"
      *     )
