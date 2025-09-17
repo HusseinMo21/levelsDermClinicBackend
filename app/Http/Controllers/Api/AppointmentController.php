@@ -26,7 +26,7 @@ class AppointmentController extends Controller
      *     path="/api/appointments",
      *     summary="Get all appointments",
      *     description="Get list of all appointments with operation number, patient name, service name, price, payment method, date, and notes",
-     *     tags={"Appointments"},
+     *     tags={"Appointments For Admin"},
      *     security={{"bearerAuth":{}}},
      *         response=200,
      *         description="Successful operation"

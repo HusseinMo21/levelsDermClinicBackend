@@ -297,7 +297,7 @@
     },
     "/dashboard/kpis": {
       "get": {
-        "tags": ["Dashboard"],
+        "tags": ["Dashboard For Admin"],
         "summary": "Get dashboard KPIs",
         "description": "Get key performance indicators for the dashboard",
         "security": [{"bearerAuth": []}],
@@ -349,7 +349,7 @@
     },
     "/dashboard/recent-appointments": {
       "get": {
-        "tags": ["Dashboard"],
+        "tags": ["Dashboard For Admin"],
         "summary": "Get recent appointments",
         "description": "Get list of recent appointments for the dashboard",
         "security": [{"bearerAuth": []}],
@@ -433,7 +433,7 @@
     },
     "/dashboard/today-appointments": {
       "get": {
-        "tags": ["Dashboard"],
+        "tags": ["Dashboard For Admin"],
         "summary": "Get today's appointments",
         "description": "Get list of today's appointments with patient, doctor, time, status, and payment method",
         "security": [{"bearerAuth": []}],
@@ -495,7 +495,7 @@
     },
     "/appointments": {
       "get": {
-        "tags": ["Appointments"],
+        "tags": ["Appointments For Admin"],
         "summary": "Get all appointments",
         "description": "Get list of all appointments with operation number, patient name, service name, price, payment method, date, and notes",
         "security": [{"bearerAuth": []}],
@@ -610,7 +610,7 @@
     },
     "/appointments/{id}": {
       "get": {
-        "tags": ["Appointments"],
+        "tags": ["Appointments For Admin"],
         "summary": "Get appointment details",
         "description": "Get detailed information about a specific appointment including patient name, phone, doctor specialization, payment processed by, etc.",
         "security": [{"bearerAuth": []}],
@@ -715,7 +715,7 @@
     },
     "/appointments/by-date/{date}": {
       "get": {
-        "tags": ["Appointments"],
+        "tags": ["Appointments For Admin"],
         "summary": "Get appointments by date",
         "description": "Get appointments for a specific date",
         "security": [{"bearerAuth": []}],
@@ -1004,7 +1004,7 @@
     },
     "/doctors": {
       "get": {
-        "tags": ["Doctors"],
+        "tags": ["Doctors For Admin"],
         "summary": "Get list of doctors",
         "description": "Retrieve a paginated list of doctors with search and filter capabilities",
         "security": [{"bearerAuth": []}],
@@ -1080,7 +1080,7 @@
         }
       },
       "post": {
-        "tags": ["Doctors"],
+        "tags": ["Doctors For Admin"],
         "summary": "Create a new doctor",
         "description": "Create a new doctor with all required information including basic info, role, permissions, financial info, working days, and credentials",
         "security": [{"bearerAuth": []}],
@@ -1185,7 +1185,7 @@
     },
     "/doctors/{id}": {
       "get": {
-        "tags": ["Doctors"],
+        "tags": ["Doctors For Admin"],
         "summary": "Get doctor details",
         "description": "Get detailed information about a specific doctor",
         "security": [{"bearerAuth": []}],
@@ -1237,7 +1237,7 @@
     },
     "/doctors/search/{term}": {
       "get": {
-        "tags": ["Doctors"],
+        "tags": ["Doctors For Admin"],
         "summary": "Search doctors",
         "description": "Search doctors by name, specialization, or license number",
         "security": [{"bearerAuth": []}],
@@ -1259,7 +1259,7 @@
     },
     "/doctors/by-specialization/{specialization}": {
       "get": {
-        "tags": ["Doctors"],
+        "tags": ["Doctors For Admin"],
         "summary": "Get doctors by specialization",
         "description": "Get all doctors with a specific specialization",
         "security": [{"bearerAuth": []}],
@@ -1281,7 +1281,7 @@
     },
     "/doctors/specializations": {
       "get": {
-        "tags": ["Doctors"],
+        "tags": ["Doctors For Admin"],
         "summary": "Get all specializations",
         "description": "Get list of all available doctor specializations",
         "security": [{"bearerAuth": []}],
@@ -1309,7 +1309,7 @@
     },
     "/doctors/{id}/info": {
       "get": {
-        "tags": ["Doctors"],
+        "tags": ["Doctors For Admin"],
         "summary": "Get doctor comprehensive info",
         "description": "Get comprehensive doctor information including statistics, reservations, and tools used",
         "security": [{"bearerAuth": []}],
